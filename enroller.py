@@ -30,8 +30,9 @@ values = {
     'password': pwd,
     'Submit': 'Login'
 }
+s = requests.Session()
 
-r = requests.post(posturl, data=values, headers=header)
+r = s.post(posturl, data=values, headers=header)
 
 try: 
     r.cookies['cuwlrelogin']
