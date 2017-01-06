@@ -35,12 +35,14 @@ s = requests.Session()
 r = s.post(posturl, data=values, headers=header)
 
 try: 
-    r.cookies['cuwlrelogin']
+    s.cookies['cuwlrelogin']
     print "Success"
 
 except KeyError:
     print "Login fails."
     sys.exit()
+
+step2 = "https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL"
 
 
     
