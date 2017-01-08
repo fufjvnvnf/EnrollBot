@@ -1,12 +1,13 @@
 import sys
 import requests
 from bs4 import BeautifulSoup
+import re
 
 # Global Session object
 s = requests.session()
 g_netid = ""
 g_pwd = ""
-classes = none
+classes = []
 
 def login(n, p):
 
@@ -73,10 +74,21 @@ def findHidden(strs, content):
 
 # record classes in the shopping cart; return as string list
 def recordCart(content):
+    soup = BeautifulSoup(content,"lxml")
+    if (soup.title.string)!= 'Enrollment Shopping Cart':
+        print('Error in code')
+        sys.exit()
+    classes = soup.find_all('span', id = lambda x: x and x.startswith('P_CLASS_NAME$span$'))
+    rtn = []
+    for each in classes:
+        rtn.append(each.text.rsplit('\r', 1)[0])
+    return rtn
+    
     
 # return true if there is a class with open spot
 def checkEmpty():
-
+    #todo
+    a = 1
 
 # actually enroll into the classes
 def enroll():
@@ -116,8 +128,9 @@ if __name__ == '__main__':
     classes = recordCart(r4.content)
     while(len(classes)!=0):
         print('Checking if any class opens up')
-        if(checkEmpty(classes):
+        if(checkEmpty(classes)):
             print('Yep. Enrolling them')
+            relogin()
             enroll()
         else:
             print('Nope. Checking again')
