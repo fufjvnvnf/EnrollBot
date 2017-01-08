@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 s = requests.session()
 g_netid = ""
 g_pwd = ""
+classes = none
 
 def login(n, p):
 
@@ -50,7 +51,11 @@ def login(n, p):
     r3 = s.post(url3, data=data3, cookies = ccookies, headers = headers)
     if (BeautifulSoup(r3.content,"lxml").title.string)!= 'Student Center':
         print('Server currently down. Failed to enter student center.')
-        sys.exit()
+        ans = input('Retry login? [y/n]')
+        if ans=='y':
+            relogin()
+        else:
+            sys.exit()
     else: print('Successfully entered student center')
     
 def relogin():
@@ -65,20 +70,24 @@ def findHidden(strs, content):
         except:
             pass
     return data
-    
 
-if __name__ == '__main__':
-    login(input('NetID: '), input('Password: '))
-    #click enroll on student center main page
-    url4 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART&Action=A&ExactKeys=Y&TargetFrameName=None'
-    r4 =  s.get(url4)
+# record classes in the shopping cart; return as string list
+def recordCart(content):
     
+# return true if there is a class with open spot
+def checkEmpty():
+
+
+# actually enroll into the classes
+def enroll():
     # proceeding to step 2
     url5 = BeautifulSoup(r4.content,"lxml").find('form', {'name': 'win0'}).get('action')
-    step2inputs = ['ICElementNum','ICStateNum','ICAction','ICXPos','ICYPos','ResponsetoDiffFrame',
+    step2inputs = ['ICType','ICElementNum','ICStateNum','ICAction','ICXPos','ICYPos','ResponsetoDiffFrame',
     'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
     'ICFind','ICAddCount','ICAPPCLSDATA']
     step1data =  findHidden(step2inputs, r4.content)
+    step1data['ICAJAX'] = '1'
+    step1data['ICNAVTYPEDROPDOWN'] = '0'
     step1data['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
     step1data['DERIVED_REGFRM1_CLASS_NBR'] = ''
     step1data['DERIVED_REGFRM1_SSR_CLS_SRCH_TYPE$249$'] = '06'
@@ -86,8 +95,37 @@ if __name__ == '__main__':
     step1headers = {
         'Origin': 'https://css.adminapps.cornell.edu',
         'Referer': url4,
-        'Host': 'css.adminapps.cornell.edu'}
-    r5 = s.post(url5, data = step1data, headers = step1headers)
-#     print (r5.content)
+        'Host': 'css.adminapps.cornell.edu',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept-Encoding': 'gzip, deflate, br'}
+    r5 = s.post(url4, data = step1data, headers = step1headers)
+    ###TODO###
+    '''
+    Got stuck on proceed to step 2. Does not show warnning div.
+    '''
+    ###at the end 
+#     recordCart(sth)
+
+# main
+if __name__ == '__main__':
+    login(input('NetID: '), input('Password: '))
+    #click enroll on student center main page
+    url4 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART&Action=A&ExactKeys=Y&TargetFrameName=None'
+    r4 =  s.get(url4)
+    classes = recordCart(r4.content)
+    while(len(classes)!=0):
+        print('Checking if any class opens up')
+        if(checkEmpty(classes):
+            print('Yep. Enrolling them')
+            enroll()
+        else:
+            print('Nope. Checking again')
+            continue
+    print('Done. All classes enrolled.')
+    
+   
+
+
     
 
