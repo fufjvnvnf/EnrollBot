@@ -29,7 +29,7 @@ def login(n, p):
     # check cookie for successful login
     try:
         cookie = s.cookies['cuwlrelogin']
-        print ("Success")
+        print ("Credential passed.")
         g_netid = n
         g_pwd = p
 
@@ -48,6 +48,10 @@ def login(n, p):
         'Referer': url2,
         'Host': 'css.adminapps.cornell.edu'}
     r3 = s.post(url3, data=data3, cookies = ccookies, headers = headers)
+    if (BeautifulSoup(r3.content,"lxml").title.string)!= 'Student Center':
+        print('Server currently down. Failed to enter student center.')
+        sys.exit()
+    else: print('Successfully entered student center')
     
 def relogin():
     login(g_netid, g_pwd)
@@ -84,6 +88,6 @@ if __name__ == '__main__':
         'Referer': url4,
         'Host': 'css.adminapps.cornell.edu'}
     r5 = s.post(url5, data = step1data, headers = step1headers)
-    print (r5.content)
+#     print (r5.content)
     
 
