@@ -3,12 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-# Global Session object
-s = requests.session()
-g_netid = ""
-g_pwd = ""
-classes = []
-
 def login(n, p):
 
     netid = n
@@ -32,6 +26,8 @@ def login(n, p):
     try:
         cookie = s.cookies['cuwlrelogin']
         print ("Credential passed.")
+        global g_netid
+        global g_pwd
         g_netid = n
         g_pwd = p
 
@@ -73,8 +69,12 @@ def findHidden(strs, content):
     return data
 
 # record classes in the shopping cart; return as string list
-def recordCart(content):
-    soup = BeautifulSoup(content,"lxml")
+def recordCart():
+    login(input('NetID: '), input('Password: '))
+    #click enroll on student center main page
+    url4 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART&Action=A&ExactKeys=Y&TargetFrameName=None'
+    r4 =  s.get(url4)
+    soup = BeautifulSoup(r4.content,"lxml")
     if (soup.title.string)!= 'Enrollment Shopping Cart':
         print('Error in code')
         sys.exit()
@@ -122,13 +122,22 @@ def checkEmpty(classes):
 
 # actually enroll into the classes
 def enroll():
+    relogin()
+    # go to shopping cart
+    url4 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART&Action=A&ExactKeys=Y&TargetFrameName=None'
+    r4 =  s.get(url4)
+    soup = BeautifulSoup(r4.content,"lxml")
+    if (soup.title.string)!= 'Enrollment Shopping Cart':
+        print('Error in code')
+        sys.exit()
     # proceeding to step 2
     url5 = BeautifulSoup(r4.content,"lxml").find('form', {'name': 'win0'}).get('action')
-    step2inputs = ['ICType','ICElementNum','ICStateNum','ICAction','ICXPos','ICYPos','ResponsetoDiffFrame',
+    step2inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
     'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
     'ICFind','ICAddCount','ICAPPCLSDATA']
     step1data =  findHidden(step2inputs, r4.content)
     step1data['ICAJAX'] = '1'
+    step1data['ICAction'] = 'DERIVED_REGFRM1_LINK_ADD_ENRL$82$'
     step1data['ICNAVTYPEDROPDOWN'] = '0'
     step1data['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
     step1data['DERIVED_REGFRM1_CLASS_NBR'] = ''
@@ -141,34 +150,22 @@ def enroll():
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-Requested-With': 'XMLHttpRequest',
         'Accept-Encoding': 'gzip, deflate, br'}
-    r5 = s.post(url4, data = step1data, headers = step1headers)
-    ###TODO###
-    '''
-    Got stuck on proceed to step 2. Does not show warnning div.
-    '''
-    ###at the end 
-#     recordCart(sth)
+    r5 = s.post(url5, data = step1data, headers = step1headers)
+    print("stuck here so far.")
+    sys.exit()
 
 # main
 if __name__ == '__main__':
-    login(input('NetID: '), input('Password: '))
-    #click enroll on student center main page
-    url4 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART&Action=A&ExactKeys=Y&TargetFrameName=None'
-    r4 =  s.get(url4)
-    classes = recordCart(r4.content)
+    global s
+    s = requests.session()
+    classes = recordCart()
+    s.cookies.clear()
     while(len(classes)!=0):
         print('Checking if any class opens up')
         if(checkEmpty(classes)):
             print('Yep. Enrolling them')
-            relogin()
             enroll()
         else:
             print('Nope. Checking again')
 
     print('Done. All classes enrolled.')
-    
-   
-
-
-    
-

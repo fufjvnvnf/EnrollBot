@@ -1,0 +1,13 @@
+<RequestsCookieJar[
+    <Cookie ExpirePage=https://css.adminapps.cornell.edu/psc/cuselfservice/ for .adminapps.cornell.edu/>, 
+    <Cookie PS_LOGINLIST=https://css.adminapps.cornell.edu/cuselfservice for .adminapps.cornell.edu/>, 
+    <Cookie PS_TOKEN=pAAAAAQDAgEBAAAAvAIAAAAAAAAsAAAABABTaGRyAk4AbQg4AC4AMQAwABSwOOUFAGXsuOeUBWR+Siztt2hrL2QAAAAFAFNkYXRhWHicHYxBDkBAEARrEQcnH7FhVyxHEeEgOLh7gR96nLaTdFVmJukHyNLEGPlNiFOsTHQ4JZ/ZWShPLm42Dn1GuXXUNASq6J9DpMeKQfS6WJV4pY8bH1gVCxI= for .adminapps.cornell.edu/>, 
+    <Cookie PS_TOKENEXPIRE=9_Jan_2017_13:07:39_GMT for .adminapps.cornell.edu/>, 
+    <Cookie SignOnDefault=HC626 for .adminapps.cornell.edu/>, 
+    <Cookie cuwltgttime="1484003255" for .cornell.edu/>, 
+    <Cookie cuwlrelogin="WAAAFLMQHtAesAFWhjNjI2QENJVC5DT1JORUxMLkVEVQAma3JidGd0L0NJVC5DT1JORUxMLkVEVUBDSVQuQ09STkVMTC5FRFUAAAASACCgrTSHYAZ7u5i6fMnsUhJfLWUO4rKMA4dT7nvOGrXZeVhzixdYc4sXWHQXt1h03JcAAAAAUOEAAAAAAAAAAAAAAWJhggFeMIIBWqADAgEFoREbD0NJVC5DT1JORUxMLkVEVaIkMCKgAwIBAqEbMBkbBmtyYnRndBsPQ0lULkNPUk5FTEwuRURVo4IBGDCCARSgAwIBEqEDAgEEooIBBgSCAQLpznzDR1fxDmOXK28VUtGCiFHn08yrL/x6o5OpE1DeNUelPXBxo5fSxZ0Q+SVcwlh68wXiZXRcocITh606fl9lLor2CvNaEoyuILmTf7EwWfK4xthPzKitQ0yBeM7Cfz/MfhfECt76YiuO3hduBi+bNX70P4+QrzakHbSsOzlVO6bQ68Vv+CrOyHyQSriOGPcCkJgXLjpDjOz38gNnJ0fLTEjPmp0c+fT5j70nCotUZ27eVAlohPI8DZkC0k85gOCM9fQuNwVDVXTEAd4jPJk/ZZ3LfTvEpuSqmLc/pn2NM6vxyunFzHKfvAtqyLGShRU6w40Ficq77ujHWrgea3eD1asAAA==" for .login.cornell.edu/>, 
+    <Cookie CUWALastWeblogin=2 for css.adminapps.cornell.edu/>, 
+    <Cookie CornellUniv_SID23122_cookie_persist=rd1230o00000000000000000000ffff0abf0016o8083 for css.adminapps.cornell.edu/>, 
+    <Cookie cuweblogin2=WAAAFDMAAQesJQguvyqlQG2TgqRyHVXA== for css.adminapps.cornell.edu/>, 
+    <Cookie m223122lweb2002-8082-PORTAL-PSJSESSIONID=jQ2DV1jB_BUSziHMKnf_n2M4vXZoBnsK!-1792923029 for css.adminapps.cornell.edu/>, 
+    <Cookie CornellUniv_SID23122_cookie_persist=rd1230o00000000000000000000ffff0abf0015o8080 for studentcenter.cornell.edu/>]>
