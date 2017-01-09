@@ -86,9 +86,28 @@ def recordCart(content):
     
     
 # return true if there is a class with open spot
-def checkEmpty():
+def checkEmpty(classes):
     #todo
-    a = 1
+    url = 'https://classes.cornell.edu/search/ajax/roster/SP17'
+    i = 0;
+    headers = {
+        'Referer': 'https://classes.cornell.edu/browse/roster/SP17',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest'}
+    while i<len(classes):
+        allsecs = [classes[i]]
+        i+=1
+        while(i<len(classes) and classes[i+1].rsplit('-', 1)[0]==classes[i].rsplit('-', 1)):
+            allsecs.append(classes[i+1])
+            i+=1
+        payload = {
+            'q': allsecs[0].rsplit('-', 1)[0],
+            'days-type': 'any',
+            'pi': ""}
+        
+        main = requests.get(url, headers = headers, params=payload)
+        print(main.text)
+        print('*****************')
 
 # actually enroll into the classes
 def enroll():
@@ -134,7 +153,7 @@ if __name__ == '__main__':
             enroll()
         else:
             print('Nope. Checking again')
-            continue
+
     print('Done. All classes enrolled.')
     
    
