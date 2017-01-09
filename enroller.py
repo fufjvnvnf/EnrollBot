@@ -82,9 +82,9 @@ def recordCart(content):
     rtn = []
     for each in classes:
         rtn.append(each.text.rsplit('\r', 1)[0])
+    print('You currently want to enroll in: ')
     print(rtn)
-    sys.exit()
-    
+    return rtn
     
 # return true if there is a class with open spot
 def checkEmpty(classes):
@@ -98,17 +98,21 @@ def checkEmpty(classes):
     while i<len(classes):
         allsecs = [classes[i]]
         i+=1
-        while(i<len(classes) and classes[i+1].rsplit('-', 1)[0]==classes[i].rsplit('-', 1)):
-            allsecs.append(classes[i+1])
+        while(i<len(classes) and classes[i-1].rsplit('-', 1)[0]==classes[i].rsplit('-', 1)[0]):
+            allsecs.append(classes[i])
             i+=1
         payload = {
             'q': allsecs[0].rsplit('-', 1)[0],
             'days-type': 'any',
             'pi': ""}
         
-        main = requests.get(url, headers = headers, params=payload)
-        print(main.text)
-        print('*****************')
+        soup = BeautifulSoup(requests.get(url, headers = headers, params=payload).content, 'lxml')
+        classname = allsecs[0].rsplit('-', 1)[0]
+        print('Checking availability for '+classname+' ...')
+        sections = soup.find('div', attrs={"class": 'node', "data-subject": classname.split()[0],"data-catalog-nbr":classname.split()[1]}).find('div',class_ = 'sections')
+        print(sections)
+        print('****************')
+        sys.exit()
 
 # actually enroll into the classes
 def enroll():
