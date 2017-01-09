@@ -82,7 +82,8 @@ def recordCart(content):
     rtn = []
     for each in classes:
         rtn.append(each.text.rsplit('\r', 1)[0])
-    return rtn
+    print(rtn)
+    sys.exit()
     
     
 # return true if there is a class with open spot
