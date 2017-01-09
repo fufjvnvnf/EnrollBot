@@ -110,9 +110,15 @@ def checkEmpty(classes):
         classname = allsecs[0].rsplit('-', 1)[0]
         print('Checking availability for '+classname+' ...')
         sections = soup.find('div', attrs={"class": 'node', "data-subject": classname.split()[0],"data-catalog-nbr":classname.split()[1]}).find('div',class_ = 'sections')
-        print(sections)
-        print('****************')
-        sys.exit()
+        # record section numbers
+        secnums = []
+        for each in allsecs:
+            sec = each.rsplit('-', 1)[1]
+            secsoup = sections.find('ul', attrs={"aria-label":lambda x: x and x.endswith(sec)})
+            status = secsoup.find('i', attrs = {"class":lambda x: x and x.startswith('fa fa-')})
+            if(status['class'][2]=="open-status-closed"):
+                return False
+        return True
 
 # actually enroll into the classes
 def enroll():
