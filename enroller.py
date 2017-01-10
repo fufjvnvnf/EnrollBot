@@ -151,11 +151,14 @@ def enroll():
         'X-Requested-With': 'XMLHttpRequest',
         'Accept-Encoding': 'gzip, deflate, br'}
     r5 = s.post(url5, data = step1data, headers = step1headers)
-    print("stuck here so far.")
-    sys.exit()
+    warning = BeautifulSoup(r5.content,'lxml').find('div',id="win0divDERIVED_SASSMSG_GROUP1")
+    while warning!= None:
+        print('You do not have a valid enrollment time. Trying again or press ctrl+c to exit.')
+        r5 = s.post(url5, data = step1data, headers = step1headers)
+        warning = BeautifulSoup(r5.content,'lxml').find('div',id="win0divDERIVED_SASSMSG_GROUP1")
 
 # main
-if __name__ == '__main__':
+def main():
     global s
     s = requests.session()
     classes = recordCart()
@@ -167,5 +170,12 @@ if __name__ == '__main__':
             enroll()
         else:
             print('Nope. Checking again')
-
     print('Done. All classes enrolled.')
+
+if __name__ == '__main__':
+    try: 
+        main()
+    except KeyboardInterrupt:
+        print('\nProgrammed terminated before all classes are enrolled.')
+        sys.exit()
+    
