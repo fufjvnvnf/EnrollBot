@@ -1,3 +1,8 @@
+# *Update*
+
+Since I not yet have a valid enrollment time, I am curretnly stuck on step 1. I am not able to crawl and model subsequent requests since
+I am not yet able to access them. I will restart on this some time during Jan 17thish.
+
 # EnrollBot
 
 This python script is intended to be used by Cornell students, especially those affiliated with CS department who are troubled by 
