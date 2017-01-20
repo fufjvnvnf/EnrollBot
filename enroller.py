@@ -117,8 +117,9 @@ def checkEmpty(classes):
             secsoup = sections.find('ul', attrs={"aria-label":lambda x: x and x.endswith(sec)})
             status = secsoup.find('i', attrs = {"class":lambda x: x and x.startswith('fa fa-')})
             if(status['class'][2]=="open-status-closed"):
-                return False
-        return True
+                break
+            return True
+    return False
 
 # actually enroll into the classes
 def enroll():
@@ -132,10 +133,10 @@ def enroll():
         sys.exit()
     # proceeding to step 2
     url5 = BeautifulSoup(r4.content,"lxml").find('form', {'name': 'win0'}).get('action')
-    step2inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
+    step1inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
     'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
     'ICFind','ICAddCount','ICAPPCLSDATA']
-    step1data =  findHidden(step2inputs, r4.content)
+    step1data =  findHidden(step1inputs, r4.content)
     step1data['ICAJAX'] = '1'
     step1data['ICAction'] = 'DERIVED_REGFRM1_LINK_ADD_ENRL$82$'
     step1data['ICNAVTYPEDROPDOWN'] = '0'
@@ -156,6 +157,29 @@ def enroll():
         print('You do not have a valid enrollment time. Trying again or press ctrl+c to exit.')
         r5 = s.post(url5, data = step1data, headers = step1headers)
         warning = BeautifulSoup(r5.content,'lxml').find('div',id="win0divDERIVED_SASSMSG_GROUP1")
+    url6 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_ADD.GBL?Page=SSR_SSENRL_ADD_C&Action=U&ACAD_CAREER=UG&EMPLID=4371385&ENRL_REQUEST_ID=&INSTITUTION=CUNIV&STRM=2657&TargetFrameName=None'
+    r6 = s.get(url6)
+    step2inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
+    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
+    'ICFind','ICAddCount','ICAPPCLSDATA']
+    step2data =  findHidden(step2inputs, r6.content)
+    step2data['ICAJAX'] = '1'
+    step2data['ICNAVTYPEDROPDOWN'] = '0'
+    num = int(BeautifulSoup(r6.content,'lxml').find('span',style="font-size:80%;").text.split()[2]) - 1
+    action = '#ICRow'+ str(num)
+    step2data['ICAction'] = action
+    url7 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_ADD.GBL'
+    r7 = s.post(url7, data = step2data)
+    step3inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
+    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
+    'ICFind','ICAddCount','ICAPPCLSDATA']
+    step3data =  findHidden(step2inputs, r7.content)
+    step3data['ICAJAX'] = '1'
+    step3data['ICNAVTYPEDROPDOWN'] = '0'
+    step3data['ICAction'] = 'DERIVED_REGFRM1_SSR_PB_SUBMIT'
+    step3data['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
+    step3data['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$'] = '9999'
+    s.post(url7, data = step3data)
 
 # main
 def main():
