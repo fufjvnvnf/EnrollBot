@@ -3,10 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-def login(n, p):
-
-    netid = n
-    pwd = p
+def login():
     
     s.headers.update({'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'})
     
@@ -15,25 +12,24 @@ def login(n, p):
     r1 = s.get(url1)
     weburl = r1.url[:30] #web*.cornell.edu
     url2 = weburl+'/'+BeautifulSoup(r1.content,"lxml").form.get('action')
+    global netid
+    global pwd
     values2 = {
         'netid': netid,
         'password': pwd,
         'Submit': 'Login'
     }
     r2 = s.post(url2, data=values2)
-    
     # check cookie for successful login
     try:
         cookie = s.cookies['cuwlrelogin']
         print ("Credential passed.")
-        global g_netid
-        global g_pwd
-        g_netid = n
-        g_pwd = p
 
     except KeyError:
         print ("Login fails.")
-        login(input('NetID: '), input('Password: '))
+        netid = input('NetID: ')
+        pwd = input('Password: ')
+        login()
     
     #c0ntinue
     url3 = BeautifulSoup(r2.content,"lxml").form.get('action')
@@ -50,13 +46,9 @@ def login(n, p):
         print('Server currently down. Failed to enter student center.')
         ans = input('Retry login? [y/n]')
         if ans=='y':
-            relogin()
+            login()
         else:
             sys.exit()
-    else: print('Successfully entered student center')
-    
-def relogin():
-    login(g_netid, g_pwd)
     
 # used to find hidden values for form data
 def findHidden(strs, content):
@@ -70,7 +62,7 @@ def findHidden(strs, content):
 
 # record classes in the shopping cart; return as string list
 def recordCart():
-    login(input('NetID: '), input('Password: '))
+    login()
     #click enroll on student center main page
     url4 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART&Action=A&ExactKeys=Y&TargetFrameName=None'
     r4 =  s.get(url4)
@@ -84,6 +76,7 @@ def recordCart():
         rtn.append(each.text.rsplit('\r', 1)[0])
     print('You currently want to enroll in: ')
     print(rtn)
+    s.cookies.clear()
     return rtn
     
 # return true if there is a class with open spot
@@ -110,20 +103,21 @@ def checkEmpty(classes):
         classname = allsecs[0].rsplit('-', 1)[0]
         print('Checking availability for '+classname+' ...')
         sections = soup.find('div', attrs={"class": 'node', "data-subject": classname.split()[0],"data-catalog-nbr":classname.split()[1]}).find('div',class_ = 'sections')
-        # record section numbers
-        secnums = []
+        open = True
         for each in allsecs:
             sec = each.rsplit('-', 1)[1]
             secsoup = sections.find('ul', attrs={"aria-label":lambda x: x and x.endswith(sec)})
             status = secsoup.find('i', attrs = {"class":lambda x: x and x.startswith('fa fa-')})
             if(status['class'][2]=="open-status-closed"):
+                open = False
                 break
+        if(open):
             return True
     return False
 
 # actually enroll into the classes
 def enroll():
-    relogin()
+    login()
     # go to shopping cart
     url4 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART&Action=A&ExactKeys=Y&TargetFrameName=None'
     r4 =  s.get(url4)
@@ -180,11 +174,17 @@ def enroll():
     step3data['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
     step3data['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$'] = '9999'
     s.post(url7, data = step3data)
+    s.cookies.clear()
+    print('Success')
 
 # main
 def main():
     global s
     s = requests.session()
+    global netid
+    netid = input('NetID: ')
+    global pwd
+    pwd = input('Password: ')
     classes = recordCart()
     s.cookies.clear()
     while(len(classes)!=0):
@@ -192,6 +192,9 @@ def main():
         if(checkEmpty(classes)):
             print('Yep. Enrolling them')
             enroll()
+            print('Relogging to check your classes')
+            classes = recordCart()
+            continue
         else:
             print('Nope. Checking again')
     print('Done. All classes enrolled.')
