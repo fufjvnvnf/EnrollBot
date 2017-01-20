@@ -1,7 +1,6 @@
-# *Update*
+# *Update* Jan. 20th 2017
 
-Since I not yet have a valid enrollment time, I am curretnly stuck on step 1. I am not able to crawl and model subsequent requests since
-I am not yet able to access them. I will restart on this some time during Jan 17thish.
+All codes done. Should be able to use the script now. Please report any bug.
 
 # EnrollBot
 
@@ -14,6 +13,10 @@ them is open, models over a student's actions of enrolling into his classes with
 
 User of this script need to have all his desired classes put in the student center shopping cart manually before running the script.
 It is also recommneded that the user does not modify the shopping cart during the running of the script.
+
+# Version & Libraries
+
+Be sure to run in python3 and install BeautifulSoup4 & requests libraries.
 
 # User Manual
 
