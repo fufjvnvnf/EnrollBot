@@ -1,7 +1,6 @@
 import sys
 import requests
 from bs4 import BeautifulSoup
-import re
 
 def login():
     
@@ -177,14 +176,7 @@ def enroll():
     s.cookies.clear()
     print('Success')
 
-# main
-def main():
-    global s
-    s = requests.session()
-    global netid
-    netid = input('NetID: ')
-    global pwd
-    pwd = input('Password: ')
+def enroll():
     classes = recordCart()
     s.cookies.clear()
     while(len(classes)!=0):
@@ -199,10 +191,23 @@ def main():
             print('Nope. Checking again')
     print('Done. All classes enrolled.')
 
+# main
+def main():
+    global s
+    s = requests.session()
+    global netid
+    netid = input('NetID: ')
+    global pwd
+    pwd = input('Password: ')
+    enroll()
+
 if __name__ == '__main__':
     try: 
         main()
     except KeyboardInterrupt:
         print('\nProgrammed terminated before all classes are enrolled.')
         sys.exit()
+    except:
+        enroll()
+        
     
