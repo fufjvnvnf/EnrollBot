@@ -176,7 +176,7 @@ def enroll():
     s.cookies.clear()
     print('Success')
 
-def enroll():
+def recordAndCheck():
     classes = recordCart()
     s.cookies.clear()
     while(len(classes)!=0):
@@ -199,7 +199,7 @@ def main():
     netid = input('NetID: ')
     global pwd
     pwd = input('Password: ')
-    enroll()
+    recordAndCheck()
 
 if __name__ == '__main__':
     try: 
@@ -208,6 +208,6 @@ if __name__ == '__main__':
         print('\nProgrammed terminated before all classes are enrolled.')
         sys.exit()
     except:
-        enroll()
+        recordAndCheck()
         
     
