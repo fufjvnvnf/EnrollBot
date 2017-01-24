@@ -106,12 +106,13 @@ def checkEmpty(classes):
         for each in allsecs:
             sec = each.rsplit('-', 1)[1]
             secsoup = sections.find('ul', attrs={"aria-label":lambda x: x and x.endswith(sec)})
-            status = secsoup.find('i', attrs = {"class":lambda x: x and x.startswith('fa fa-')})
+            status = secsoup.find('i')
             if(status['class'][2]=="open-status-closed"):
                 open = False
                 break
         if(open):
             return True
+
     return False
 
 # actually enroll into the classes
