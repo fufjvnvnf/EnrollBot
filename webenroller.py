@@ -1,6 +1,7 @@
 import sys
 import requests
 from bs4 import BeautifulSoup
+from time import sleep
 
 def login():
     
@@ -191,12 +192,10 @@ def recordAndCheck():
                 continue
             else:
                 print('Nope. Checking again')
+                sleep(6)
         print('Done. All classes enrolled.')
-    except KeyboardInterrupt:
-        print('\nProgrammed terminated before all classes are enrolled.')
-        sys.exit()# 
-#     except:
-#         recordAndCheck()
+    except:
+        recordAndCheck()
 
 # main
 def main():
