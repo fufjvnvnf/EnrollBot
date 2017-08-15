@@ -3,9 +3,9 @@ import requests
 from bs4 import BeautifulSoup
 
 def login():
-    
+
     s.headers.update({'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'})
-    
+
     #initially going to studentcenter.cornell.edu
     url1 = "http://studentcenter.cornell.edu"
     r1 = s.get(url1)
@@ -29,7 +29,7 @@ def login():
         netid = input('NetID: ')
         pwd = input('Password: ')
         login()
-    
+
     #c0ntinue
     url3 = BeautifulSoup(r2.content,"lxml").form.get('action')
     hidden = BeautifulSoup(r2.content,"lxml").form.input.get('value')
@@ -48,7 +48,7 @@ def login():
             login()
         else:
             sys.exit()
-    
+
 # used to find hidden values for form data
 def findHidden(strs, content):
     data = {}
@@ -77,14 +77,14 @@ def recordCart():
     print(rtn)
     s.cookies.clear()
     return rtn
-    
+
 # return true if there is a class with open spot
 def checkEmpty(classes):
     #todo
-    url = 'https://classes.cornell.edu/search/ajax/roster/SP17'
+    url = 'https://classes.cornell.edu/search/ajax/roster/FA17'
     i = 0;
     headers = {
-        'Referer': 'https://classes.cornell.edu/browse/roster/SP17',
+        'Referer': 'https://classes.cornell.edu/browse/roster/FA17',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36',
         'X-Requested-With': 'XMLHttpRequest'}
     while i<len(classes):
@@ -97,7 +97,7 @@ def checkEmpty(classes):
             'q': allsecs[0].rsplit('-', 1)[0],
             'days-type': 'any',
             'pi': ""}
-        
+
         soup = BeautifulSoup(requests.get(url, headers = headers, params=payload).content, 'lxml')
         classname = allsecs[0].rsplit('-', 1)[0]
         print('Checking availability for '+classname+' ...')
@@ -127,7 +127,7 @@ def enroll():
     # proceeding to step 2
     url5 = BeautifulSoup(r4.content,"lxml").find('form', {'name': 'win0'}).get('action')
     step1inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
-    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
+    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt',
     'ICFind','ICAddCount','ICAPPCLSDATA']
     step1data =  findHidden(step1inputs, r4.content)
     step1data['ICAJAX'] = '1'
@@ -153,7 +153,7 @@ def enroll():
     url6 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_ADD.GBL?Page=SSR_SSENRL_ADD_C&Action=U&ACAD_CAREER=UG&EMPLID=4371385&ENRL_REQUEST_ID=&INSTITUTION=CUNIV&STRM=2657&TargetFrameName=None'
     r6 = s.get(url6)
     step2inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
-    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
+    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt',
     'ICFind','ICAddCount','ICAPPCLSDATA']
     step2data =  findHidden(step2inputs, r6.content)
     step2data['ICAJAX'] = '1'
@@ -164,7 +164,7 @@ def enroll():
     url7 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_ADD.GBL'
     r7 = s.post(url7, data = step2data)
     step3inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
-    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
+    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt',
     'ICFind','ICAddCount','ICAPPCLSDATA']
     step3data =  findHidden(step2inputs, r7.content)
     step3data['ICAJAX'] = '1'
@@ -193,7 +193,7 @@ def recordAndCheck():
         print('Done. All classes enrolled.')
     except KeyboardInterrupt:
         print('\nProgrammed terminated before all classes are enrolled.')
-        sys.exit()# 
+        sys.exit()#
 #     except:
 #         recordAndCheck()
 
@@ -208,11 +208,8 @@ def main():
     recordAndCheck()
 
 if __name__ == '__main__':
-    try: 
+    try:
         main()
     except KeyboardInterrupt:
         print('\nProgrammed terminated before all classes are enrolled.')
         sys.exit()
-
-        
-    

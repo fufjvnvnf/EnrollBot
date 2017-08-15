@@ -4,9 +4,9 @@ from bs4 import BeautifulSoup
 from time import sleep
 
 def login():
-    
+
     s.headers.update({'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'})
-    
+
     #initially going to studentcenter.cornell.edu
     url1 = "http://studentcenter.cornell.edu"
     r1 = s.get(url1)
@@ -30,7 +30,7 @@ def login():
         netid = input('NetID: ')
         pwd = input('Password: ')
         login()
-    
+
     #c0ntinue
     url3 = BeautifulSoup(r2.content,"lxml").form.get('action')
     hidden = BeautifulSoup(r2.content,"lxml").form.input.get('value')
@@ -49,7 +49,7 @@ def login():
             login()
         else:
             sys.exit()
-    
+
 # used to find hidden values for form data
 def findHidden(strs, content):
     data = {}
@@ -78,14 +78,42 @@ def recordCart():
     print(rtn)
     s.cookies.clear()
     return rtn
-    
+
 # return true if there is a class with open spot
-def checkEmpty(classes):
-    #todo
-    url = 'https://classes.cornell.edu/search/ajax/roster/SP17'
-    i = 0;
+def checkEmpty():
+    login()
+#     # go to shopping cart
+#     url4 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART&Action=A&ExactKeys=Y&TargetFrameName=None'
+#     r4 =  s.get(url4)
+#     soup = BeautifulSoup(r4.content,"lxml")
+#     if (soup.title.string)!= 'Enrollment Shopping Cart':
+#         print('Error in code')
+#         sys.exit()
+#     classes = soup.find_all('tr', attrs={"id":lambda x: x and x.startswith('trSSR_REGFORM_VW$0_row')})
+#     if(len(classes)==0):
+#         print('Done. All classes are enrolled.')
+#         sys.exit()
+#     i = 0
+#     while(i<len(classes)):
+#         c = [classes[i]]
+#         while(i!=len(classes)-1 and classes[i+1].find('a',attrs={'name': 'P_DELETE$0'})==None):
+#             c.append(classes[i+1])
+#             i+=1
+#         empty = True;
+#         name = c[0].find('a', attrs={'name':'P_CLASS_NAME$0'}).text
+#         print(name)
+#         for each in c:
+#             if(each.find('img')['alt']=='Closed'):
+#                 empty = False;
+#                 break;
+#         if(empty):
+#             print(name+' is open.')
+#             enroll()
+#             checkEmpty()
+    url = "https://classes.cornell.edu/search/ajax/roster/FA17"
+    i = 0
     headers = {
-        'Referer': 'https://classes.cornell.edu/browse/roster/SP17',
+        'Referer': 'https://classes.cornell.edu/browse/roster/FA17',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36',
         'X-Requested-With': 'XMLHttpRequest'}
     while i<len(classes):
@@ -94,32 +122,33 @@ def checkEmpty(classes):
         while(i<len(classes) and classes[i-1].rsplit('-', 1)[0]==classes[i].rsplit('-', 1)[0]):
             allsecs.append(classes[i])
             i+=1
-        payload = {
-            'q': allsecs[0].rsplit('-', 1)[0],
-            'days-type': 'any',
-            'pi': ""}
-        
+            payload = {
+           'q': allsecs[0].rsplit('-', 1)[0],
+           'days-type': 'any',
+           'pi': ""}
+
         soup = BeautifulSoup(requests.get(url, headers = headers, params=payload).content, 'lxml')
         classname = allsecs[0].rsplit('-', 1)[0]
         print('Checking availability for '+classname+' ...')
         sections = soup.find('div', attrs={"class": 'node', "data-subject": classname.split()[0],"data-catalog-nbr":classname.split()[1]}).find('div',class_ = 'sections')
         open = True
         for each in allsecs:
-            sec = each.rsplit('-', 1)[1]
-            secsoup = sections.find('ul', attrs={"aria-label":lambda x: x and x.endswith(sec)})
-            status = secsoup.find('i')
-            if(status['class'][2]=="open-status-closed"):
-                open = False
-                break
+           sec = each.rsplit('-', 1)[1]
+           secsoup = sections.find('ul', attrs={"aria-label":lambda x: x and x.endswith(sec)})
+           status = secsoup.find('i')
+           if(status['class'][2]=="open-status-closed"):
+               open = False
+               break
         if(open):
-            return True
+           return True
 
-    return False
+        return False
 
 # actually enroll into the classes
 def enroll():
-    login()
-    # go to shopping cart
+#    login()
+   # go to shopping cart
+    print('Enrolling...')
     url4 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?Page=SSR_SSENRL_CART&Action=A&ExactKeys=Y&TargetFrameName=None'
     r4 =  s.get(url4)
     soup = BeautifulSoup(r4.content,"lxml")
@@ -129,7 +158,7 @@ def enroll():
     # proceeding to step 2
     url5 = BeautifulSoup(r4.content,"lxml").find('form', {'name': 'win0'}).get('action')
     step1inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
-    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
+    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt',
     'ICFind','ICAddCount','ICAPPCLSDATA']
     step1data =  findHidden(step1inputs, r4.content)
     step1data['ICAJAX'] = '1'
@@ -155,7 +184,7 @@ def enroll():
     url6 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_ADD.GBL?Page=SSR_SSENRL_ADD_C&Action=U&ACAD_CAREER=UG&EMPLID=4371385&ENRL_REQUEST_ID=&INSTITUTION=CUNIV&STRM=2657&TargetFrameName=None'
     r6 = s.get(url6)
     step2inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
-    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
+    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt',
     'ICFind','ICAddCount','ICAPPCLSDATA']
     step2data =  findHidden(step2inputs, r6.content)
     step2data['ICAJAX'] = '1'
@@ -166,7 +195,7 @@ def enroll():
     url7 = 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_ADD.GBL'
     r7 = s.post(url7, data = step2data)
     step3inputs = ['ICType','ICElementNum','ICStateNum','ICXPos','ICYPos','ResponsetoDiffFrame',
-    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt', 
+    'TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt',
     'ICFind','ICAddCount','ICAPPCLSDATA']
     step3data =  findHidden(step2inputs, r7.content)
     step3data['ICAJAX'] = '1'
@@ -178,25 +207,6 @@ def enroll():
     s.cookies.clear()
     print('Success')
 
-def recordAndCheck():
-    try:
-        classes = recordCart()
-        s.cookies.clear()
-        while(len(classes)!=0):
-            print('Checking if any class opens up')
-            if(checkEmpty(classes)):
-                print('Yep. Enrolling them')
-                enroll()
-                print('Relogging to check your classes')
-                classes = recordCart()
-                continue
-            else:
-                print('Nope. Checking again')
-                sleep(6)
-        print('Done. All classes enrolled.')
-    except:
-        recordAndCheck()
-
 # main
 def main():
     global s
@@ -205,14 +215,11 @@ def main():
     netid = input('NetID: ')
     global pwd
     pwd = input('Password: ')
-    recordAndCheck()
+    checkEmpty()
 
 if __name__ == '__main__':
-    try: 
+    try:
         main()
     except KeyboardInterrupt:
         print('\nProgrammed terminated before all classes are enrolled.')
         sys.exit()
-
-        
-    
