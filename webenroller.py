@@ -42,13 +42,13 @@ def login():
         'Referer': url2,
         'Host': 'css.adminapps.cornell.edu'}
     r3 = s.post(url3, data=data3, cookies = ccookies, headers = headers)
-    if (BeautifulSoup(r3.content,"lxml").title.string)!= 'Student Center':
-        print('Server currently down. Failed to enter student center.')
-        ans = input('Retry login? [y/n]')
-        if ans=='y':
-            login()
-        else:
-            sys.exit()
+    # if (BeautifulSoup(r3.content,"lxml").title.string)!= 'Student Center':
+    #     print('Server currently down. Failed to enter student center.')
+    #     ans = input('Retry login? [y/n]')
+    #     if ans=='y':
+    #         login()
+    #     else:
+    #         sys.exit()
 
 # used to find hidden values for form data
 def findHidden(strs, content):
