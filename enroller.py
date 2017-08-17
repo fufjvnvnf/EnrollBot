@@ -90,6 +90,8 @@ def checkEmpty(classes):
         'X-Requested-With': 'XMLHttpRequest'}
     while i<len(classes):
         allsecs = [classes[i]]
+        classname = allsecs[0].rsplit('-', 1)[0]
+        print('Checking availability for '+classname+' ...')
         i+=1
         while(i<len(classes) and classes[i-1].rsplit('-', 1)[0]==classes[i].rsplit('-', 1)[0]):
             allsecs.append(classes[i])
@@ -100,8 +102,6 @@ def checkEmpty(classes):
             'pi': ""}
 
         soup = BeautifulSoup(requests.get(url, headers = headers, params=payload).content, 'lxml')
-        classname = allsecs[0].rsplit('-', 1)[0]
-        print('Checking availability for '+classname+' ...')
         sections = soup.find('div', attrs={"class": 'node', "data-subject": classname.split()[0],"data-catalog-nbr":classname.split()[1]}).find('div',class_ = 'sections')
         open = True
         for each in allsecs:
@@ -112,8 +112,10 @@ def checkEmpty(classes):
                 open = False
                 break
         if(open):
-            return True
-    return False
+            enroll()
+        else:
+            print("Nope, still full.")
+    checkEmpty(classes)
 
 # actually enroll into the classes
 def enroll():
